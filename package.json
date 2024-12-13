@@ -1,0 +1,25 @@
+{
+  "name": "test-submodule-react",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@mittwald/react-use-promise": "^2.6.0",
+    "@submodule/core": "9.0.0",
+    "@types/bun": "^1.1.13",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "18",
+    "@vitejs/plugin-react": "^4.3.3",
+    "@vitejs/plugin-react-swc": "^3.7.1",
+    "eventemitter3": "^5.0.1",
+    "jotai": "^2.10.3",
+    "jotai-effect": "^1.0.5",
+    "pokenode-ts": "^1.20.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "rfdc": "^1.4.1",
+    "vite": "^5.4.11"
+  },
+  "scripts": {
+    "dev": "vite"
+  }
+}
