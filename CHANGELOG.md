@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/submodule-org/submodule-react/compare/v1.0.0...v1.0.1) (2024-12-16)
+
+
+### Bug Fixes
+
+* package.json ([09ed7bc](https://github.com/submodule-org/submodule-react/commit/09ed7bc092c3eb307d4ba3eacd0d17ce993ffa60))
+
 ## 1.0.0 (2024-12-16)
 
 
