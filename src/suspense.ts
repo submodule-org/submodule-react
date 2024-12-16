@@ -1,31 +1,40 @@
 import type { Observable, Slice } from "@submodule/core";
-import { useResource } from "./core";
+import { useResolve } from "./core";
+import { useEffect, useState } from "react";
 
 export function useController<P, API>(executor: Observable<P, API>): API {
-  return useResource(
-    executor,
-    { suspense: true as const },
-    (resource) => resource.controller as API
-  );
+  const resolved = useResolve(executor, { suspense: true });
+  return resolved.controller as API
 }
 
-export function useObservable<P, API>(executor: Observable<P, API>): P {
-  return useResource(
-    executor,
-    { suspense: true as const },
-    (resource) => resource.get(),
-  );
+export function useObservable<P, API>(
+  executor: Observable<P, API>,
+): P {
+  const resource = useResolve(executor, { suspense: true });
+  const [value, setValue] = useState(() => resource.get());
+
+  useEffect(() => {
+    return resource.onValue(setValue)
+  }, [resource])
+
+  return value
 }
 
 export function useSlice<P, API, S>(
   executor: Observable<P, API>,
-  slice: Slice<P, S>
+  slice: Slice<P, S>,
 ): S {
-  return useResource(
-    executor,
-    { suspense: true as const },
-    (resource) => slice.slice(resource.get()),
-  );
+  const resource = useResolve(executor, { suspense: true });
+  const [value, setValue] = useState(slice.slice(resource.get()));
+
+  useEffect(() => {
+    return resource.onSlice(slice, (next) => {
+      setValue(next)
+    })
+  }, [resource, slice])
+
+  return value
 }
 
-export { ScopeProvider, useScope } from "./shared";
+export { ScopeProvider, useScope } from "./core";
+export type { Slice } from "@submodule/core";
