@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/submodule-org/submodule-react/compare/v1.0.2...v1.0.3) (2024-12-16)
+
+
+### Bug Fixes
+
+* fixed the implementation ([93e767b](https://github.com/submodule-org/submodule-react/commit/93e767be79ff9f483dee8b5d4b058286c50e6cca))
+
 ## [1.0.2](https://github.com/submodule-org/submodule-react/compare/v1.0.1...v1.0.2) (2024-12-16)
 
 

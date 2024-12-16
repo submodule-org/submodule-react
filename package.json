@@ -1,6 +1,6 @@
 {
   "name": "@submodule/react",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "make use of @submodule/core in react",
   "dependencies": {
     "@submodule/core": "9.1.1"
