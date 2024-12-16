@@ -10,7 +10,7 @@
   },
   "tsup": {
     "entry": [
-      "src/index.ts",
+      "src/index.tsx",
       "src/suspense.ts"
     ],
     "minify": false,
@@ -42,7 +42,8 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "dev": "vite"
+    "dev": "vite",
+    "build": "tsup"
   },
   "devDependencies": {
     "@testing-library/react": "^16.1.0",
