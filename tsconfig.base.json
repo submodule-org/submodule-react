@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"moduleResolution": "Bundler",
+		"declaration": true,
+		"emitDeclarationOnly": true,
+		"esModuleInterop": true,
+		"strictNullChecks": true,
+		"jsx": "react",
+		"allowSyntheticDefaultImports": true,
+		"customConditions": ["source"],
+		"target": "ES2022",
+		"module": "Preserve"
+	}
+}
