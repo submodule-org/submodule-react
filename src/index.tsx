@@ -28,3 +28,5 @@ export function useSlice<P, API, S>(
 		slice.slice(resource.get()),
 	);
 }
+
+export { ScopeProvider, useScope } from "./shared";
