@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/submodule-org/submodule-react/compare/v1.0.1...v1.0.2) (2024-12-16)
+
+
+### Bug Fixes
+
+* exposed ScopeProvider and useScope ([8f9e732](https://github.com/submodule-org/submodule-react/commit/8f9e73234f3d7211a7c5f892bf462ddd7a1e4adc))
+
 ## [1.0.1](https://github.com/submodule-org/submodule-react/compare/v1.0.0...v1.0.1) (2024-12-16)
 
 
