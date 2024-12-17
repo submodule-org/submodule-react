@@ -17,7 +17,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@submodule/react": "link:@submodule/react",
+    "@submodule/react": "^1.0.4",
     "@eslint/js": "^9.9.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
