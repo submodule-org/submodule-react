@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/submodule-org/submodule-react/compare/v1.0.3...v1.0.4) (2024-12-17)
+
+
+### Bug Fixes
+
+* focus on suspense version for now ([2c5add8](https://github.com/submodule-org/submodule-react/commit/2c5add8ba8c5df2ef421663456dcbe80e36f6c81))
+
 ## [1.0.3](https://github.com/submodule-org/submodule-react/compare/v1.0.2...v1.0.3) (2024-12-16)
 
 
