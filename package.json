@@ -10,8 +10,11 @@
   },
   "tsup": {
     "entry": [
-      "src/index.tsx",
-      "src/suspense.ts"
+      "src/index.tsx"
+    ],
+    "format": [
+      "cjs",
+      "esm"
     ],
     "minify": false,
     "treeshake": false,
@@ -28,16 +31,10 @@
   ],
   "exports": {
     ".": {
-      "source": "./src/index.ts",
+      "source": "./src/index.tsx",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./suspense": {
-      "source": "./src/suspense.ts",
-      "require": "./dist/suspense.js",
-      "types": "./dist/suspense.d.ts",
-      "import": "./dist/suspense.js"
+      "import": "./dist/index.mjs"
     },
     "./package.json": "./package.json"
   },

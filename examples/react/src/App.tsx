@@ -1,35 +1,68 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { Suspense } from "react";
+import { ScopeProvider, useController, useObservable } from "@submodule/react";
+import { counter, config } from "../subs/counter";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+export default function App() {
+	return (
+		<>
+			<ScopeProvider>
+				<Suspense>
+					<Counter />
+				</Suspense>
+			</ScopeProvider>
+		</>
+	);
 }
 
-export default App
+function Counter() {
+	const counterValue = useObservable(config);
+	const controller = useController(config);
+	const counterApp = useObservable(counter);
+
+	return (
+		<>
+			<div>
+				<h2>Controller board</h2>
+				<div>
+					<label htmlFor="seedInput">Seed</label>
+					<input
+						id="seedInput"
+						type="number"
+						value={counterValue.seed}
+						onChange={(e) =>
+							controller.setSeed(Number.parseInt(e.target.value))
+						}
+					/>
+				</div>
+
+				<div>
+					<label htmlFor="incrementInput">Increment</label>
+					<input
+						id="incrementInput"
+						type="number"
+						value={counterValue.increment}
+						onChange={(e) =>
+							controller.setIncrement(Number.parseInt(e.target.value))
+						}
+					/>
+				</div>
+
+				<div>
+					<label htmlFor="frequencyInput">Frequency</label>
+					<input
+						id="frequencyInput"
+						type="number"
+						value={counterValue.frequency}
+						onChange={(e) =>
+							controller.setFrequency(Number.parseInt(e.target.value))
+						}
+					/>
+				</div>
+			</div>
+			<div>
+				<h2>Counter</h2>
+				<div>{counterApp}</div>
+			</div>
+		</>
+	);
+}
