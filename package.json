@@ -3,10 +3,10 @@
   "version": "1.0.4",
   "description": "make use of @submodule/core in react",
   "dependencies": {
-    "@submodule/core": "9.1.1"
+    "@submodule/core": "^9.1.1"
   },
   "peerDependencies": {
-    "react": "^17.0.0"
+    "react": "*"
   },
   "tsup": {
     "entry": [
