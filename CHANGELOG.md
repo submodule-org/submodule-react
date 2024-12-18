@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.5](https://github.com/submodule-org/submodule-react/compare/v1.0.4...v1.0.5) (2024-12-18)
+
+
+### Bug Fixes
+
+* cleanup peer deps ([38df884](https://github.com/submodule-org/submodule-react/commit/38df884370fd86788baeb414eed039f5592a5e5f))
+* fixed setState on mount ([3effa61](https://github.com/submodule-org/submodule-react/commit/3effa6121108b43d80aaee2672aa611d15fcaa06))
+
 ## [1.0.4](https://github.com/submodule-org/submodule-react/compare/v1.0.3...v1.0.4) (2024-12-17)
 
 
