@@ -78,44 +78,38 @@ let cache = [] as CacheEntry[];
 
 function useResolve<T>(executor: Executor<T>): T {
 	const scope = useContext(scopeContext);
-	const [, forceUpdate] = useState({});
 
 	if (!scope) {
 		throw new Error("useScope must be used within a ScopeProvider");
 	}
 
-	const entry = cache.find(([s, e]) => s === scope && e === executor);
+	for (const [s, e, c] of cache) {
+		if (s === scope && e === executor && c.result) {
+			if ("error" in c.result) {
+				throw c.result.error;
+			}
 
-	if (!entry) {
-		const cacheEntry: CacheEntry = [
-			scope,
-			executor,
-			{
-				promise: scope.resolve(executor).then(
-					(resolved) => {
-						cacheEntry[2].result = { data: resolved };
-						forceUpdate({});
-					},
-					(e) => {
-						cacheEntry[2].result = { error: e };
-						forceUpdate({});
-					},
-				),
-			},
-		];
-		cache.push(cacheEntry);
-		throw cacheEntry[2].promise;
+			return c.result.data as T;
+		}
 	}
 
-	if (!entry[2].result) {
-		throw entry[2].promise;
-	}
+	const cacheEntry: CacheEntry = [
+		scope,
+		executor,
+		{
+			promise: scope.resolve(executor).then(
+				(resolved) => {
+					cacheEntry[2].result = { data: resolved };
+				},
+				(e) => {
+					cacheEntry[2].result = { error: e };
+				},
+			),
+		},
+	];
 
-	if ("error" in entry[2].result) {
-		throw entry[2].result.error;
-	}
-
-	return entry[2].result.data as T;
+	cache.push(cacheEntry);
+	throw cacheEntry[2].promise;
 }
 
 /**
