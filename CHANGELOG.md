@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/submodule-org/submodule-react/compare/v1.1.0...v1.1.1) (2024-12-19)
+
+
+### Bug Fixes
+
+* corrected usePipe impleemntation ([442aa19](https://github.com/submodule-org/submodule-react/commit/442aa197d7e50fe5818538e71da88cbe2bda1307))
+
 ## [1.1.0](https://github.com/submodule-org/submodule-react/compare/v1.0.5...v1.1.0) (2024-12-19)
 
 
