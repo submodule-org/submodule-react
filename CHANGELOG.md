@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/submodule-org/submodule-react/compare/v1.0.5...v1.1.0) (2024-12-19)
+
+
+### Features
+
+* pumped to latest core, fixed typing ([fed6b46](https://github.com/submodule-org/submodule-react/commit/fed6b461343623057b18d5552c27733db7df9156))
+
 ## [1.0.5](https://github.com/submodule-org/submodule-react/compare/v1.0.4...v1.0.5) (2024-12-18)
 
 
