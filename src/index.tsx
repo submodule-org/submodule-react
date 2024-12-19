@@ -176,7 +176,9 @@ export function useObservableN<P>(
 		[resource],
 	);
 
-	return useSyncExternalStore(subs, () => resource.get() || defaultValue);
+	return useSyncExternalStore(subs, () => {
+		return resource.get() || defaultValue;
+	});
 }
 
 /**
@@ -198,8 +200,25 @@ export function usePipe<Value, Upstream>(
 	ppipe: PipeDispatcher<Value, Upstream>,
 	defaultValue: Value,
 ): Value {
-	const piped = useMemo(() => pipe(upstream, ppipe), [upstream, ppipe]);
-	return useObservableN(piped, defaultValue);
+	const [value, setValue] = useState(defaultValue);
+	const u = useResolve(upstream);
+
+	useEffect(() => {
+		let mounted = true;
+
+		const cleanup = u.pipe(ppipe, (next) => {
+			if (mounted) {
+				setValue(next);
+			}
+		});
+
+		return () => {
+			mounted = false;
+			cleanup();
+		};
+	}, [ppipe, u]);
+
+	return value;
 }
 
 export type { PipeDispatcher } from "@submodule/core";

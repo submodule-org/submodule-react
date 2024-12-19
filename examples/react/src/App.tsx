@@ -1,6 +1,13 @@
-import React, { Suspense } from "react";
-import { ScopeProvider, useController, useObservable } from "@submodule/react";
-import { counter, config } from "../subs/counter";
+import React, { Suspense, useCallback, useState } from "react";
+import {
+	ScopeProvider,
+	useController,
+	useObservable,
+	useObservableN,
+	usePipe,
+	type PipeDispatcher,
+} from "@submodule/react";
+import { counter, config, onlyOddStream } from "../subs/counter";
 
 export default function App() {
 	return (
@@ -14,10 +21,19 @@ export default function App() {
 	);
 }
 
+const includeEven: PipeDispatcher<number, number> = (value, set) => {
+	if (value % 2 === 0) {
+		set(value);
+	}
+};
+
 function Counter() {
 	const counterValue = useObservable(config);
 	const controller = useController(config);
 	const counterApp = useObservable(counter);
+
+	const onlyOdd = useObservableN(onlyOddStream, 1);
+	const onlyEven = usePipe(counter, includeEven, 0);
 
 	return (
 		<>
@@ -62,6 +78,8 @@ function Counter() {
 			<div>
 				<h2>Counter</h2>
 				<div>{counterApp}</div>
+				<div>only odd: {onlyOdd}</div>
+				<div>only even: {onlyEven}</div>
 			</div>
 		</>
 	);

@@ -2,8 +2,8 @@
   "name": "react",
   "version": "0.0.0",
   "dependencies": {
-    "@submodule/core": "^9.3.2",
-    "@submodule/react": "^1.0.5",
+    "@submodule/core": "^9.3.3",
+    "@submodule/react": "^1.0.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

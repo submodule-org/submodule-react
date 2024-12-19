@@ -76,3 +76,9 @@ export const counter = flatMap(config, config => {
   })
 
 })
+
+export const onlyOddStream = pipe<number, number>(counter, (v, set) => {
+  if (v % 2 !== 0) {
+    set(v)
+  }
+})
