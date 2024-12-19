@@ -1,17 +1,22 @@
 import {
 	createScope,
+	pipe,
 	type Executor,
-	type Observable,
 	type Scope,
-	type Slice,
+	type Observable,
+	type PipeDispatcher,
+	type ObservableN,
 } from "@submodule/core";
 import React, {
 	createContext,
 	type PropsWithChildren,
+	useCallback,
 	useContext,
 	useEffect,
 	useMemo,
+	useRef,
 	useState,
+	useSyncExternalStore,
 } from "react";
 
 const scopeContext = createContext<Scope | undefined>(undefined);
@@ -139,7 +144,10 @@ export function useController<P, API>(executor: Observable<P, API>): API {
  * @throws {Promise} During initial load (for Suspense)
  * @throws {Error} If used outside of a ScopeProvider
  */
-export function useObservable<P, API>(executor: Observable<P, API>): P {
+export function useObservable<P>(
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	executor: Observable<P, any>,
+): P {
 	const resource = useResolve(executor);
 	const [value, setValue] = useState(() => resource.get());
 
@@ -148,6 +156,27 @@ export function useObservable<P, API>(executor: Observable<P, API>): P {
 	}, [resource]);
 
 	return value;
+}
+
+export function useObservableN<P>(
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	executor: ObservableN<P, any>,
+	defaultValue: P,
+): P {
+	const resource = useResolve(executor);
+	const valueRef = useRef<P>(undefined);
+
+	const subs = useCallback(
+		(next: () => void) => {
+			return resource.onValue((nextValue) => {
+				valueRef.current = nextValue;
+				next();
+			});
+		},
+		[resource],
+	);
+
+	return useSyncExternalStore(subs, () => resource.get() || defaultValue);
 }
 
 /**
@@ -163,20 +192,14 @@ export function useObservable<P, API>(executor: Observable<P, API>): P {
  * @throws {Promise} During initial load (for Suspense)
  * @throws {Error} If used outside of a ScopeProvider
  */
-export function useSlice<P, API, S>(
-	executor: Observable<P, API>,
-	slice: Slice<P, S>,
-): S {
-	const resource = useResolve(executor);
-	const [value, setValue] = useState(slice.slice(resource.get()));
-
-	useEffect(() => {
-		return resource.onSlice(slice, (next) => {
-			setValue(next);
-		});
-	}, [resource, slice]);
-
-	return value;
+export function usePipe<Value, Upstream>(
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	upstream: Observable<Upstream, any>,
+	ppipe: PipeDispatcher<Value, Upstream>,
+	defaultValue: Value,
+): Value {
+	const piped = useMemo(() => pipe(upstream, ppipe), [upstream, ppipe]);
+	return useObservableN(piped, defaultValue);
 }
 
-export type { Slice } from "@submodule/core";
+export type { PipeDispatcher } from "@submodule/core";

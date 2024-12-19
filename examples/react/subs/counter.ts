@@ -1,4 +1,4 @@
-import { provide, observable, map } from "@submodule/core"
+import { observable, map, flatMap, pipe } from "@submodule/core"
 
 type CounterConfig = {
   seed: number
@@ -12,7 +12,7 @@ type ChangeConfig = {
   setFrequency: (frequency: number) => void
 }
 
-export const config = provide(() => observable<CounterConfig, ChangeConfig>(set => ({
+export const config = observable<CounterConfig, ChangeConfig>(set => ({
   initialValue: {
     seed: 0,
     increment: 1,
@@ -29,9 +29,9 @@ export const config = provide(() => observable<CounterConfig, ChangeConfig>(set 
       set(prev => ({ ...prev, seed }))
     }
   }
-})))
+}))
 
-export const counter = map(config, config => {
+export const counter = flatMap(config, config => {
   return observable<number>(set => {
     const currentConfig = config.get()
 
@@ -46,10 +46,18 @@ export const counter = map(config, config => {
       timer = setTimeout(tick, frequency)
     }, frequency)
 
-    config.onSlice({ slice: p => p.seed }, newSeed => { seed = newSeed })
-    config.onSlice({ slice: p => p.increment }, newIncrement => { increment = newIncrement })
-    config.onSlice({ slice: p => p.frequency }, newFrequency => {
+    config.pipe<number>(
+      (v, set) => set(v.seed),
+      next => {
+        seed = next
+      }
+    )
+
+    config.pipe<number>((v, set) => set(v.seed), newSeed => { seed = newSeed })
+    config.pipe<number>((v, set) => set(v.increment), newIncrement => { increment = newIncrement })
+    config.pipe<number>((v, set) => set(v.frequency), newFrequency => {
       clearTimeout(timer)
+
       frequency = newFrequency
       timer = setTimeout(function tick() {
         seed += increment
