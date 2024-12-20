@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/submodule-org/submodule-react/compare/v1.1.1...v1.2.0) (2024-12-20)
+
+
+### Features
+
+* exposed useResolve ([e1c2112](https://github.com/submodule-org/submodule-react/commit/e1c21127a811ecc285ab42eef18d0619bc21e000))
+
 ## [1.1.1](https://github.com/submodule-org/submodule-react/compare/v1.1.0...v1.1.1) (2024-12-19)
 
 
