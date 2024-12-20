@@ -1,6 +1,5 @@
 import {
 	createScope,
-	pipe,
 	type Executor,
 	type Scope,
 	type Observable,
@@ -81,7 +80,13 @@ type CacheEntry = [Scope, Executor<unknown>, Cache];
 
 let cache = [] as CacheEntry[];
 
-function useResolve<T>(executor: Executor<T>): T {
+/**
+ * Core functionality of submodule. Resolves an executor within the current scope.
+ *
+ * @param executor
+ * @returns
+ */
+export function useResolve<T>(executor: Executor<T>): T {
 	const scope = useContext(scopeContext);
 
 	if (!scope) {
