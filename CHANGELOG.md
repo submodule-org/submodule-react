@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/submodule-org/submodule-react/compare/v1.2.0...v1.3.0) (2024-12-24)
+
+
+### Features
+
+* updated to the latest core, simplified observable api ([f596c6c](https://github.com/submodule-org/submodule-react/commit/f596c6c2b1cda42e17efd773db16e510d39d070c))
+
 ## [1.2.0](https://github.com/submodule-org/submodule-react/compare/v1.1.1...v1.2.0) (2024-12-20)
 
 
