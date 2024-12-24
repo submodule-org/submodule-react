@@ -1,10 +1,5 @@
-import { observable, map, flatMap, pipe } from "@submodule/core"
-
-type CounterConfig = {
-  seed: number
-  increment: number
-  frequency: number
-}
+import { provideObservable, createPipe, map, combine, scoper } from "@submodule/core"
+import { createObservable } from "@submodule/core/observables"
 
 type ChangeConfig = {
   setSeed: (seed: number) => void
@@ -12,73 +7,76 @@ type ChangeConfig = {
   setFrequency: (frequency: number) => void
 }
 
-export const config = observable<CounterConfig, ChangeConfig>(set => ({
-  initialValue: {
-    seed: 0,
-    increment: 1,
-    frequency: 1000
-  },
-  controller: {
-    setFrequency(frequency) {
-      set(prev => ({ ...prev, frequency }))
-    },
-    setIncrement(increment) {
-      set(prev => ({ ...prev, increment }))
-    },
-    setSeed(seed) {
-      set(prev => ({ ...prev, seed }))
-    }
-  }
-}))
-
-export const counter = flatMap(config, config => {
-  return observable<number>(set => {
-    const currentConfig = config.get()
-
-    let seed = currentConfig.seed
-    let increment = currentConfig.increment
-    let frequency = currentConfig.frequency
-
-    let timer = setTimeout(function tick() {
-      seed += increment
-      set(() => seed)
-
-      timer = setTimeout(tick, frequency)
-    }, frequency)
-
-    config.pipe<number>(
-      (v, set) => set(v.seed),
-      next => {
-        seed = next
-      }
-    )
-
-    config.pipe<number>((v, set) => set(v.seed), newSeed => { seed = newSeed })
-    config.pipe<number>((v, set) => set(v.increment), newIncrement => { increment = newIncrement })
-    config.pipe<number>((v, set) => set(v.frequency), newFrequency => {
-      clearTimeout(timer)
-
-      frequency = newFrequency
-      timer = setTimeout(function tick() {
-        seed += increment
-        set(() => seed)
-
-        timer = setTimeout(tick, frequency)
-      }, frequency)
-    })
-
-    return {
-      initialValue: seed,
-      cleanup: () => {
-        clearTimeout(timer)
-      }
-    }
-  })
-
+export const config = provideObservable({
+  seed: 0,
+  increment: 1,
+  frequency: 1000
 })
 
-export const onlyOddStream = pipe<number, number>(counter, (v, set) => {
+export const configController = map(
+  config,
+  (config): ChangeConfig => ({
+    setFrequency(frequency) {
+      config.setValue(prev => ({ ...prev, frequency }))
+    },
+    setIncrement(increment) {
+      config.setValue((prev) => ({ ...prev, increment }))
+    },
+    setSeed(seed) {
+      config.setValue((prev) => ({ ...prev, seed }))
+    }
+  })
+)
+
+export const counter = map(
+  combine({ scoper, config, configController }),
+  ({ scoper, config }) => {
+
+    let seed = config.value.seed
+    let increment = config.value.increment
+    let frequency = config.value.frequency
+
+    const counterObservable = createObservable(config.value.seed)
+
+    let currentTimeout: number
+
+    function createTimeout(): number {
+      return setTimeout(() => {
+        seed += increment
+        counterObservable.setValue(seed)
+
+        currentTimeout = createTimeout()
+      }, frequency)
+    }
+
+    currentTimeout = createTimeout()
+
+    const cleanup = config.onValue(next => {
+      if (next.seed !== seed) {
+        seed = next.seed
+      }
+
+      if (next.increment !== increment) {
+        increment = next.increment
+      }
+
+      if (next.frequency !== frequency) {
+        frequency = next.frequency
+        clearInterval(currentTimeout)
+        currentTimeout = createTimeout()
+      }
+    })
+
+    scoper.addDefer(() => {
+      cleanup()
+      clearInterval(currentTimeout)
+    })
+
+    return counterObservable
+  })
+
+export const onlyOddStream = createPipe(counter, (v, set) => {
   if (v % 2 !== 0) {
     set(v)
   }
-})
+}, Number.NaN)

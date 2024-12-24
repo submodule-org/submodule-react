@@ -3,10 +3,12 @@
   "version": "1.2.0",
   "description": "make use of @submodule/core in react",
   "dependencies": {
-    "@submodule/core": "^9.3.3"
+    "@submodule/core": "^10.1.1",
+    "@types/react": "18.3.3"
   },
   "peerDependencies": {
-    "react": "*"
+    "@submodule/core": "^10.1.1",
+    "react": "^19.0.0"
   },
   "tsup": {
     "entry": [
@@ -40,7 +42,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsup"
+    "build": "tsup",
+    "update:submodule": "bun add @submodule/core -f && (cd examples/react && bun add @submodule/core -f)",
+    "link:example": "bun run build && bun link && (cd examples/react && bun rm @submodule/react && bun link @submodule/react)"
   },
   "devDependencies": {
     "@testing-library/react": "^16.1.0",

@@ -4,8 +4,9 @@ import {
 	type Scope,
 	type Observable,
 	type PipeDispatcher,
-	type ObservableN,
+	createPipe,
 } from "@submodule/core";
+
 import React, {
 	createContext,
 	type PropsWithChildren,
@@ -13,8 +14,6 @@ import React, {
 	useContext,
 	useEffect,
 	useMemo,
-	useRef,
-	useState,
 	useSyncExternalStore,
 } from "react";
 
@@ -123,22 +122,6 @@ export function useResolve<T>(executor: Executor<T>): T {
 }
 
 /**
- * Returns the controller API from an Observable.
- * Uses Suspense for loading states.
- *
- * @template P The payload type
- * @template API The controller API type
- * @param executor The Observable instance
- * @returns The controller API
- * @throws {Promise} During initial load (for Suspense)
- * @throws {Error} If used outside of a ScopeProvider
- */
-export function useController<P, API>(executor: Observable<P, API>): API {
-	const resolved = useResolve(executor);
-	return resolved.controller as API;
-}
-
-/**
  * Subscribes to an Observable and returns its current value.
  * Uses Suspense for loading states.
  *
@@ -149,40 +132,18 @@ export function useController<P, API>(executor: Observable<P, API>): API {
  * @throws {Promise} During initial load (for Suspense)
  * @throws {Error} If used outside of a ScopeProvider
  */
-export function useObservable<P>(
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	executor: Observable<P, any>,
-): P {
-	const resource = useResolve(executor);
-	const [value, setValue] = useState(() => resource.get());
-
-	useEffect(() => {
-		return resource.onValue(setValue);
-	}, [resource]);
-
-	return value;
-}
-
-export function useObservableN<P>(
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	executor: ObservableN<P, any>,
-	defaultValue: P,
-): P {
-	const resource = useResolve(executor);
-	const valueRef = useRef<P>(undefined);
+export function useObservable<P>(executor: Executor<Observable<P>>): P {
+	const observable = useResolve(executor);
 
 	const subs = useCallback(
-		(next: () => void) => {
-			return resource.onValue((nextValue) => {
-				valueRef.current = nextValue;
-				next();
-			});
+		(cb: () => void) => {
+			return observable.onValue(cb);
 		},
-		[resource],
+		[observable],
 	);
 
 	return useSyncExternalStore(subs, () => {
-		return resource.get() || defaultValue;
+		return observable.value;
 	});
 }
 
@@ -200,28 +161,21 @@ export function useObservableN<P>(
  * @throws {Error} If used outside of a ScopeProvider
  */
 export function usePipe<Value, Upstream>(
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	upstream: Observable<Upstream, any>,
+	pupstream: Executor<Observable<Upstream>>,
 	ppipe: PipeDispatcher<Value, Upstream>,
-	defaultValue: Value,
-): Value {
-	const [value, setValue] = useState(defaultValue);
-	const u = useResolve(upstream);
+	initialValue: Value,
+) {
+	const upstream = useResolve(pupstream);
 
-	useEffect(() => {
-		let mounted = true;
+	const [value, setValue] = React.useState(initialValue);
 
-		const cleanup = u.pipe(ppipe, (next) => {
-			if (mounted) {
-				setValue(next);
-			}
+	React.useEffect(() => {
+		const unsub = upstream.onValue((upstreamValue) => {
+			ppipe(upstreamValue, setValue);
 		});
 
-		return () => {
-			mounted = false;
-			cleanup();
-		};
-	}, [ppipe, u]);
+		return unsub;
+	}, [upstream, ppipe]);
 
 	return value;
 }
