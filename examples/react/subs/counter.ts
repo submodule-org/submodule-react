@@ -1,12 +1,6 @@
 import { provideObservable, createPipe, map, combine, scoper } from "@submodule/core"
 import { createObservable } from "@submodule/core/observables"
 
-type ChangeConfig = {
-  setSeed: (seed: number) => void
-  setIncrement: (increment: number) => void
-  setFrequency: (frequency: number) => void
-}
-
 export const config = provideObservable({
   seed: 0,
   increment: 1,
@@ -15,14 +9,14 @@ export const config = provideObservable({
 
 export const configController = map(
   config,
-  (config): ChangeConfig => ({
-    setFrequency(frequency) {
+  (config) => ({
+    setFrequency(frequency: number) {
       config.setValue(prev => ({ ...prev, frequency }))
     },
-    setIncrement(increment) {
+    setIncrement(increment: number) {
       config.setValue((prev) => ({ ...prev, increment }))
     },
-    setSeed(seed) {
+    setSeed(seed: number) {
       config.setValue((prev) => ({ ...prev, seed }))
     }
   })
