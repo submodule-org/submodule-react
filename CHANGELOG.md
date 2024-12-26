@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/submodule-org/submodule-react/compare/v1.3.0...v1.3.1) (2024-12-26)
+
+
+### Bug Fixes
+
+* fixed the submodule issue by pumping to the latest ([7a5e269](https://github.com/submodule-org/submodule-react/commit/7a5e2699c7ca201ce5858940d987116923cb1642))
+
 ## [1.3.0](https://github.com/submodule-org/submodule-react/compare/v1.2.0...v1.3.0) (2024-12-24)
 
 
