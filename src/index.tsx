@@ -2,9 +2,8 @@ import {
 	createScope,
 	type Executor,
 	type Scope,
-	type Observable,
+	type ObservableGet,
 	type PipeDispatcher,
-	createPipe,
 } from "@submodule/core";
 
 import React, {
@@ -132,19 +131,23 @@ export function useResolve<T>(executor: Executor<T>): T {
  * @throws {Promise} During initial load (for Suspense)
  * @throws {Error} If used outside of a ScopeProvider
  */
-export function useObservable<P>(executor: Executor<Observable<P>>): P {
+export function useObservable<P>(executor: Executor<ObservableGet<P>>): P {
 	const observable = useResolve(executor);
 
 	const subs = useCallback(
 		(cb: () => void) => {
-			return observable.onValue(cb);
+			return observable.onValue((next) => {
+				queueMicrotask(cb);
+			});
 		},
 		[observable],
 	);
 
-	return useSyncExternalStore(subs, () => {
-		return observable.value;
-	});
+	return useSyncExternalStore(
+		subs,
+		() => observable.value,
+		() => observable.value,
+	);
 }
 
 /**
@@ -161,7 +164,7 @@ export function useObservable<P>(executor: Executor<Observable<P>>): P {
  * @throws {Error} If used outside of a ScopeProvider
  */
 export function usePipe<Value, Upstream>(
-	pupstream: Executor<Observable<Upstream>>,
+	pupstream: Executor<ObservableGet<Upstream>>,
 	ppipe: PipeDispatcher<Value, Upstream>,
 	initialValue: Value,
 ) {

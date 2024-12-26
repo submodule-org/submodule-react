@@ -1,43 +1,43 @@
 import { provideObservable, createPipe, map, combine, scoper } from "@submodule/core"
 import { createObservable } from "@submodule/core/observables"
 
-export const config = provideObservable({
+export const [readConfig, writeConfig] = provideObservable({
   seed: 0,
   increment: 1,
   frequency: 1000
 })
 
 export const configController = map(
-  config,
-  (config) => ({
+  writeConfig,
+  (writeConfig) => ({
     setFrequency(frequency: number) {
-      config.setValue(prev => ({ ...prev, frequency }))
+      writeConfig(prev => ({ ...prev, frequency }))
     },
     setIncrement(increment: number) {
-      config.setValue((prev) => ({ ...prev, increment }))
+      writeConfig((prev) => ({ ...prev, increment }))
     },
     setSeed(seed: number) {
-      config.setValue((prev) => ({ ...prev, seed }))
+      writeConfig((prev) => ({ ...prev, seed }))
     }
   })
 )
 
 export const counter = map(
-  combine({ scoper, config, configController }),
-  ({ scoper, config }) => {
+  combine({ scoper, readConfig, configController }),
+  ({ scoper, readConfig: config }) => {
 
     let seed = config.value.seed
     let increment = config.value.increment
     let frequency = config.value.frequency
 
-    const counterObservable = createObservable(config.value.seed)
+    const [counter, setCounter] = createObservable(config.value.seed)
 
     let currentTimeout: number
 
     function createTimeout(): number {
       return setTimeout(() => {
         seed += increment
-        counterObservable.setValue(seed)
+        setCounter(seed)
 
         currentTimeout = createTimeout()
       }, frequency)
@@ -66,7 +66,7 @@ export const counter = map(
       clearInterval(currentTimeout)
     })
 
-    return counterObservable
+    return counter
   })
 
 export const onlyOddStream = createPipe(counter, (v, set) => {
