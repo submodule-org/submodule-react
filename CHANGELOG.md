@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/submodule-org/submodule-react/compare/v1.3.1...v1.3.2) (2024-12-26)
+
+
+### Bug Fixes
+
+* make peer dependencies to include react 19 as well ([c2cab8a](https://github.com/submodule-org/submodule-react/commit/c2cab8a81ee1fca55251bf9e6824d3b7b2669fba))
+
 ## [1.3.1](https://github.com/submodule-org/submodule-react/compare/v1.3.0...v1.3.1) (2024-12-26)
 
 
