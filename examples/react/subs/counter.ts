@@ -69,7 +69,7 @@ export const counter = map(
     return counter
   })
 
-export const onlyOddStream = createPipe(counter, (v, set) => {
+export const [onlyOddStream] = createPipe(counter, (v, set) => {
   if (v % 2 !== 0) {
     set(v)
   }
