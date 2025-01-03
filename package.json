@@ -7,7 +7,7 @@
     "react": "^18.0.0 || ^19.0.0"
   },
   "peerDependencies": {
-    "@submodule/core": "^11.2.0",
+    "@submodule/core": "^11.3.1",
     "react": "^18.0.0 || ^19.0.0"
   },
   "tsup": {
@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@testing-library/react": "^16.1.0",
-    "@submodule/core": "^11.2.0",
+    "@submodule/core": "^11.3.1",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
