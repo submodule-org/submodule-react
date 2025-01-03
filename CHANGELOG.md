@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/submodule-org/submodule-react/compare/v1.4.1...v1.4.2) (2025-01-03)
+
+
+### Bug Fixes
+
+* pumped to next version of submodule ([e99944c](https://github.com/submodule-org/submodule-react/commit/e99944c980682203e28bac1fa7cbdb1e8aca18aa))
+
 ## [1.4.1](https://github.com/submodule-org/submodule-react/compare/v1.4.0...v1.4.1) (2025-01-03)
 
 
