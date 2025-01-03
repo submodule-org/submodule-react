@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/submodule-org/submodule-react/compare/v1.4.0...v1.4.1) (2025-01-03)
+
+
+### Bug Fixes
+
+* corrected dependency ([ff3d1c3](https://github.com/submodule-org/submodule-react/commit/ff3d1c37a0e6db393619d880d6eec157b112945c))
+
 ## [1.4.0](https://github.com/submodule-org/submodule-react/compare/v1.3.3...v1.4.0) (2025-01-03)
 
 
