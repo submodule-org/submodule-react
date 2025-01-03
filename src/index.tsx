@@ -3,7 +3,9 @@ import {
 	type Executor,
 	type Scope,
 	type ObservableGet,
-	type PipeDispatcher,
+	provideObservable,
+	combineObservables,
+	combine,
 } from "@submodule/core";
 
 import React, {
@@ -120,6 +122,13 @@ export function useResolve<T>(executor: Executor<T>): T {
 	throw cacheEntry[2].promise;
 }
 
+export function useObservable<P, V>(
+	executor: Executor<ObservableGet<P>>,
+	transform: (value: P) => V,
+): V;
+
+export function useObservable<P>(executor: Executor<ObservableGet<P>>): P;
+
 /**
  * Subscribes to an Observable and returns its current value.
  * Uses Suspense for loading states.
@@ -131,7 +140,10 @@ export function useResolve<T>(executor: Executor<T>): T {
  * @throws {Promise} During initial load (for Suspense)
  * @throws {Error} If used outside of a ScopeProvider
  */
-export function useObservable<P>(executor: Executor<ObservableGet<P>>): P {
+export function useObservable<P, V>(
+	executor: Executor<ObservableGet<P>>,
+	transform?: (value: P) => V,
+): P | V {
 	const observable = useResolve(executor);
 
 	const subs = useCallback(
@@ -145,42 +157,40 @@ export function useObservable<P>(executor: Executor<ObservableGet<P>>): P {
 
 	return useSyncExternalStore(
 		subs,
-		() => observable.value,
-		() => observable.value,
+		() => (transform ? transform(observable.value) : observable.value),
+		() => (transform ? transform(observable.value) : observable.value),
 	);
 }
 
-/**
- * Subscribes to a slice of an Observable's value.
- * Uses Suspense for loading states.
- *
- * @template P The payload type
- * @template API The controller API type
- * @template S The slice type
- * @param executor The Observable instance
- * @param slice The slice selector
- * @returns The current value of the selected slice
- * @throws {Promise} During initial load (for Suspense)
- * @throws {Error} If used outside of a ScopeProvider
- */
-export function usePipe<Value, Upstream>(
-	pupstream: Executor<ObservableGet<Upstream>>,
-	ppipe: PipeDispatcher<Value, Upstream>,
-	initialValue: Value,
-) {
-	const upstream = useResolve(pupstream);
+export function useCombines<Upstreams extends Record<string, unknown>, Value>(
+	upstreams: {
+		[K in keyof Upstreams]: Executor<ObservableGet<Upstreams[K]>>;
+	},
+	transform: (upstreams: Upstreams, prev: Value) => Value,
+	intialValue: Value,
+): Value;
 
-	const [value, setValue] = React.useState(initialValue);
+export function useCombines<Upstreams extends Record<string, unknown>>(
+	upstreams: {
+		[K in keyof Upstreams]: Executor<ObservableGet<Upstreams[K]>>;
+	},
+): Upstreams;
 
-	React.useEffect(() => {
-		const unsub = upstream.onValue((upstreamValue) => {
-			ppipe(upstreamValue, setValue);
-		});
+export function useCombines<Upstreams extends Record<string, unknown>, Value>(
+	upstreams: {
+		[K in keyof Upstreams]: Executor<ObservableGet<Upstreams[K]>>;
+	},
+	transform?: (upstreams: Upstreams, prev: Value) => Value,
+	initialValue?: Value,
+): Value | Upstreams {
+	const observable = useMemo(() => {
+		return combineObservables(
+			upstreams,
+			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			transform as any,
+			initialValue as Value,
+		);
+	}, [upstreams, transform, initialValue]);
 
-		return unsub;
-	}, [upstream, ppipe]);
-
-	return value;
+	return useObservable(observable);
 }
-
-export type { PipeDispatcher } from "@submodule/core";
